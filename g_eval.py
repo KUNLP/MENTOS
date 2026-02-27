@@ -32,7 +32,7 @@ Rating: [1|2|3]
 Please make sure you read and understand these instructions carefully. Keep the conversation history in mind while reviewing, and refer to it as needed.
 
 Evaluation Criteria:
-Naturalness (1-3) Is the response naturally written??
+Naturalness (1-3) Is the response naturally written?
 - A score of 1 (bad) means that the response is unnatural.
 - A score of 2 (ok) means the response is strange, but not entirely unnatural.
 - A score of 3 (good) means that the response is natural.
@@ -53,7 +53,7 @@ Please make sure you read and understand these instructions carefully. Keep the 
 
 Evaluation Criteria:
 Coherence (1-3) Does the response serve as a valid continuation of the conversation history?
-- A score of 1 (no) means that the response drastically changes topic orignores the conversation history.
+- A score of 1 (no) means that the response drastically changes topic or ignores the conversation history.
 - A score of 2 (somewhat) means the response refers to the conversation history in a limited capacity (e.g., in a generic way) and shifts the conversation topic.
 - A score of 3 (yes) means the response is on topic and strongly acknowledges the conversation history.
 

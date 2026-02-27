@@ -55,7 +55,7 @@ def print_trainable_parameters(model):
 def create_instruction(dialog, mental_state_type):
     answer = mental_state_type +": "+dialog["mental_state"][mental_state_type]
     conversation = ""
-    for d_idx, d in enumerate(dialog["conversation"]):
+    for d_idx, d in enumerate(dialog["conversation"][:-1]):
         num= d_idx + 1
         conversation += f"({num}) "+d["speaker"].replace("usr", "Client").replace("seeker", "Client").replace("sys", "Assistant").replace("supporter", "Assistant")+": "+d["text"].strip() + "\n"
 
@@ -70,7 +70,7 @@ def create_instruction(dialog, mental_state_type):
             input_mental_states += "{}: {}\n".format(k, v.replace("’", "'"))
         input_mental_states += "\n"
     mental_state_question_dict = {
-        "Belief": "What does the assistant believe about the client's mental states, as revealed in the client's last utterance?",
+        "Belief": "What does the assistant believe about the client’s situation or internal state based on the client's last utterance?",
         "Emotion": "What emotional reaction might the assistant have after the client's last utterance, based on the assistant's belief and how the conversation has unfolded? Rate each basic emotion from 0 (not present) to 3 (intense). Then rate mixed emotions only if both contributing basic emotions are rated 2 or higher and are explicitly reflected in the assistant's wording.",
         "Intent": "What is the assistant's intent following the client's last utterance, based on the assistant's belief, emotional reaction, and desire?"
     }
@@ -138,30 +138,18 @@ def training(cli_args):
     output_dir = f"./{model_name}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        print(f"디렉토리를 생성했습니다: {output_dir}")
-    else:
-        print(f"디렉토리가 이미 존재합니다: {output_dir}")
     
     output_dir = f"./{model_name}/model"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        print(f"디렉토리를 생성했습니다: {output_dir}")
-    else:
-        print(f"디렉토리가 이미 존재합니다: {output_dir}")
 
     output_dir = f"./{model_name}/model/{args.output_file}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        print(f"디렉토리를 생성했습니다: {output_dir}")
-    else:
-        print(f"디렉토리가 이미 존재합니다: {output_dir}")
 
     output_dir = f"./{model_name}/model/{args.output_file}/{mental_state_type}"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        print(f"디렉토리를 생성했습니다: {output_dir}")
-    else:
-        print(f"디렉토리가 이미 존재합니다: {output_dir}")
 
     tokenizer = AutoTokenizer.from_pretrained(
         args.model_name, 
@@ -357,27 +345,6 @@ def training(cli_args):
             args=training_args,
             data_collator=collator,
         )
-            
-    for batch in trainer.get_train_dataloader():
-        labels = batch["labels"]            # shape [bs, seq_len]
-        valid_counts = (labels != -100).sum(dim=1)  # 배치별 유효 토큰 개수
-        if (valid_counts == 0).any():
-            print("⚠️ 유효 라벨이 0개인 샘플 발견")
-            print("라벨 분포:", valid_counts)
-            break
-
-    def detect_nan(module, inp, out):
-        # out이 Tensor면 튜플로, 튜플이면 그대로 사용
-        outputs = out if isinstance(out, tuple) else (out,)
-        for o in outputs:
-            # o가 Tensor인지도 확인 (혹시 None일 수도 있으니)
-            if isinstance(o, torch.Tensor):
-                if torch.isnan(o).any() or torch.isinf(o).any():
-                    print(f"⚠️ NaN/Inf detected in {module.__class__.__name__}")
-                    return  # 한 번 감지되면 충분하면 종료
-
-    for m in trainer.model.modules():
-        m.register_forward_hook(detect_nan)
 
     torch.autograd.set_detect_anomaly(True)
     trainer.train()
@@ -385,9 +352,6 @@ def training(cli_args):
         trainer.save_model(training_args.output_dir)
     else:
         model.save_pretrained(training_args.output_dir)
-    print(
-            "\n If there's a warning about missing keys above, please disregard :)"
-        )
 
     return model    
 
