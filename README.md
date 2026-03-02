@@ -12,6 +12,7 @@ The original ESConv dataset is licensed under the
 > Data and code are for academic research use only.
 
 **License for MENTOS**
+
 MENTOS contains original annotations and derived materials based on ESConv.
 These materials are distributed **for academic research use only. Commercial use is strictly prohibited.**
 
