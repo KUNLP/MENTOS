@@ -175,3 +175,12 @@ Then run:
 
   `python g_eval.py --read_file test_response_200.jsonl --api_key OPENAI_API_KEY  --model_type gpt-4o-mini-2024-07-18`
 
+## Authors and Contact
+
+Main Contributor:
+- Seulgi Kim (Konkuk University) - cloudyju11@konkuk.ac.kr
+
+Corresponding Author:
+- Harksoo Kim (Konkuk University) - nlpdrkim@konkuk.ac.kr
+  
+For questions about the dataset or collaboration opportunities, please contact the corresponding author or the main contributor.
